@@ -1,11 +1,19 @@
 const { Router } = require('express')
+const ensureAuthenticated = require('../middlewares/ensureAuthenticated')
+const multer = require('multer')
+const uploadConfig = require('../configs/upload')
 const UsersController = require('../controllers/UsersController')
+const UserAvatarController = require('../controllers/UserAvatarController')
 
-const usersRouter = Router()
+const usersRoutes = Router()
 
 const usersController = new UsersController()
+const userAvatarController = new UserAvatarController()
 
-usersRouter.post("/", usersController.create)
-usersRouter.put("/:user_id", usersController.update)
+const upload = multer(uploadConfig.MULTER)
 
-module.exports = usersRouter
+usersRoutes.post("/", usersController.create)
+usersRoutes.put("/", ensureAuthenticated, usersController.update)
+usersRoutes.patch("/avatar", ensureAuthenticated, upload.single("avatar"), userAvatarController.update)
+
+module.exports = usersRoutes

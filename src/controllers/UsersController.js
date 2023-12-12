@@ -35,7 +35,7 @@ class UsersController {
 
   async update(request, response) {
     const { name, email, password, old_password } = request.body
-    const { user_id } = request.params
+    const user_id = request.user.id
 
     //conect DB
     const database = await sqliteConnection()
@@ -85,7 +85,7 @@ class UsersController {
       WHERE id = (?)
     `, [user.name, user.email, user.password, user_id])
 
-    return response.json({ message: 'Usuário atualizado!' })
+    return response.json({ message: 'Usuário atualizado!', user })
   }
 }
 
